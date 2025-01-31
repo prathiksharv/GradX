@@ -1,0 +1,191 @@
+---
+title: "GradX – Graduation Success Predictor"
+author: "Prathiksha Rumale Vishwanath"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r install, include=FALSE}
+options(repos = c(CRAN = "https://cloud.r-project.org/"))
+install.packages("tidyverse", dependencies = TRUE)
+install.packages("readr", dependencies = TRUE)
+install.packages("dplyr", dependencies = TRUE)
+install.packages("ggplot2", dependencies = TRUE)
+install.packages("car", dependencies = TRUE)
+install.packages("knitr", dependencies = TRUE)
+install.packages("caret", dependencies = TRUE)
+```
+
+```{r load, include=FALSE}
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(car)
+library(knitr)
+library(caret)
+```
+
+## Introduction: Understanding Student Dropout Risk
+
+In this analysis, we aim to predict whether a student will **graduate or drop out** based on various academic, financial, and demographic factors. The dataset contains information about student enrollment, previous qualifications, financial aid status, academic performance, and socioeconomic indicators. By applying **logistic regression**, we aim to identify key predictors of student success and help educational institutions implement data-driven retention strategies.
+
+**Objectives:**
+- Identify the most significant factors affecting student dropout rates.
+- Train and evaluate a predictive model using real student data.
+- Provide actionable insights to improve student retention.
+
+## Load the Data
+
+```{r load-data}
+# Load student enrollment data set (CSV file)
+data <- read_csv("data.csv", col_names = TRUE, col_types = cols())
+head(data)
+```
+
+## Data Cleaning
+
+```{r data-cleaning}
+# Check for missing values and display only columns with missing data
+missing_values <- colSums(is.na(data))
+missing_values[missing_values > 0]
+```
+
+```{r fix-delimiter}
+# Reload data set with correct delimiter once observed and analyzing presence or missing values
+data <- read.csv("data.csv", sep = ";", header = TRUE)
+head(data)
+```
+
+## Student Enrollment by Course
+
+```{r course-enrollment}
+# Count number of students per course
+course_enrollment <- data %>% 
+  group_by(Course) %>% 
+  summarise(Number_of_Students = n()) %>% 
+  arrange(desc(Number_of_Students))
+
+# Display summary of top 10 enrolled courses
+top_courses <- head(course_enrollment, 10)
+print(top_courses)
+
+```
+
+```{r plot-course-enrollment, echo=FALSE}
+# Plot: Top 10 Courses with Highest Enrollment
+ggplot(top_courses, aes(x = reorder(Course, -Number_of_Students), y = Number_of_Students)) +
+  geom_bar(stat = "identity", fill = "pink") +
+  theme_minimal() +
+  labs(title = "Top 10 Courses with Highest Student Enrollment", x = "Course ID", y = "Number of Students") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Dropout vs Graduation Rate
+
+```{r dropout-distribution}
+# Count students based on their academic status
+dropout_distribution <- data %>% 
+  group_by(Target) %>% 
+  summarise(Count = n())
+
+# Display summary
+dropout_distribution
+```
+
+```{r plot-dropout-distribution, echo=FALSE}
+# Plot: Dropout vs Graduation Rate
+ggplot(dropout_distribution, aes(x = Target, y = Count, fill = Target)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Student Status (Target) Distribution", x = "Student Status", y = "Count")
+```
+
+## Statistical Analysis: Predicting Dropout
+
+```{r checking dataset column names}
+#Analyzing all columns for feature engineering
+colnames(data)
+```
+
+## Train-Test Split and Model Evaluation
+
+```{r Test the Logistic Regression Model}
+# Split data into 80% training and 20% testing set
+set.seed(42)
+trainIndex <- createDataPartition(data$Target, p = 0.8, list = FALSE)
+trainData <- data[trainIndex, ]
+testData <- data[-trainIndex, ]
+
+# Train logistic regression model on selected features of the training data
+model <- glm(Target ~ Age.at.enrollment + Scholarship.holder + `Gender` + `Curricular.units.1st.sem..grade.` + `Curricular.units.2nd.sem..grade.` , 
+            data = trainData, family = binomial)
+```
+
+##Summary
+
+```{r}
+# Display model summary
+summary(model)
+```
+
+## Variance Inflation Factor (VIF) Analysis
+
+```{r}
+# Check multicollinearity among predictor variables
+vif(model)
+```
+##Confusion Matrix
+
+```{r}
+# Make predictions on test data
+predictions <- predict(model, newdata = testData, type = "response")
+
+# Convert predicted probabilities into class labels
+predicted_classes <- ifelse(predictions >= 0.5, "Graduate", "Dropout")
+
+# Evaluate model performance using confusion matrix
+confusionMatrix(factor(predicted_classes), testData$Target)
+```
+
+## New Student Dropout or Graduation Prediction
+
+```{r new-student-prediction}
+# Define new student data for prediction
+new_data <- data.frame(
+  Age.at.enrollment = c(21, 25, 30),
+  Scholarship.holder = c(1, 0, 1),  # 1 = Has Scholarship, 0 = No Scholarship
+  Gender = c(1, 0, 1),  # 1 = Male, 0 = Female
+  Curricular.units.1st.sem..grade. = c(14, 10, 12),
+  Curricular.units.2nd.sem..grade. = c(15, 9, 11)
+)
+
+# Predict dropout probability
+predictions <- predict(model, newdata = new_data, type = "response")
+
+# Convert probabilities into class labels
+predicted_classes <- ifelse(predictions >= 0.75, "Graduate", "Dropout")
+
+# Display results
+prediction_results <- data.frame(new_data, Predicted_Status = predicted_classes, Probability = predictions)
+print(prediction_results)
+```
+
+## Conclusion and Actionable Insights
+This analysis provides insights into **student enrollment trends and dropout rates**, helping institutions understand key factors influencing student retention.
+
+### **Key Takeaways:**
+- **VIF Analysis:** No severe multicollinearity issues detected, ensuring predictor stability.
+- **Model Accuracy:** ~80.8% accuracy with a sensitivity of **62.3%** and specificity of **92.7%**.
+- **Key Predictors:** Scholarship holders have significantly higher graduation rates, while older students are more likely to drop out.
+- **Predictions:** The model successfully classifies new students based on their academic and demographic factors.
+
+### **Actionable Insights:**
+1. **Scholarship Programs Significantly Reduce Dropout Rates**
+   - Students who receive scholarships have a **much higher likelihood of graduating** than those without financial aid.
+   - **Action:** Educational institutions should **increase scholarship availability** or introduce **financial assistance programs** to support at-risk students.
+
+2. **Early Academic Performance is a Key Indicator of Retention**
+   - **First-semester grades** strongly correlate with dropout likelihood.
+   - **Action:** Universities should implement **early intervention strategies** such as **mentoring, tutoring, and academic support programs** for students struggling in their **first semester**.
