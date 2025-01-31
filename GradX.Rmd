@@ -118,9 +118,14 @@ trainIndex <- createDataPartition(data$Target, p = 0.8, list = FALSE)
 trainData <- data[trainIndex, ]
 testData <- data[-trainIndex, ]
 
-# Train logistic regression model on selected features of the training data
-model <- glm(Target ~ Age.at.enrollment + Scholarship.holder + `Gender` + `Curricular.units.1st.sem..grade.` + `Curricular.units.2nd.sem..grade.` , 
-            data = trainData, family = binomial)
+# Ensure Target is a factor
+trainData$Target <- factor(trainData$Target, levels = c("Dropout", "Graduate"))
+testData$Target <- factor(testData$Target, levels = c("Dropout", "Graduate"))
+
+# Train logistic regression model
+model <- glm(Target ~ Age.at.enrollment + Scholarship.holder + Gender + 
+             Curricular.units.1st.sem..grade. + Curricular.units.2nd.sem..grade., 
+             data = trainData, family = binomial)
 ```
 
 ##Summary
