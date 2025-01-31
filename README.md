@@ -64,8 +64,4 @@ The following chart displays the **top 10 courses** with the highest student enr
 3. **Run all code chunks** to train the model and analyze results.
 
 ---
-🚀 **Future Work:** Additional predictors such as **tuition fees and socioeconomic background** could be incorporated for improved accuracy. Hyperparameter tuning can further refine the model.
-
-📌 **Contributions & Feedback**: Feel free to fork, modify, and contribute to this project!
-
-
+🚀 **Future Work:** Additional predictors such as **tuition fees and socioeconomic background** could be incorporated for improved accuracy.
