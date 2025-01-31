@@ -46,7 +46,7 @@ This analysis provides insights into **student enrollment trends and dropout rat
 
 ### **Key Takeaways:**
 - **VIF Analysis:** No severe multicollinearity issues detected, ensuring predictor stability.
-- **Model Accuracy:** ~80.8% accuracy with a sensitivity of **62.3%** and specificity of **92.7%**.
+- **Model Accuracy:** **~81.1%** accuracy with a sensitivity of **63.0%** and specificity of **92.7%**.
 - **Key Predictors:** Scholarship holders have significantly higher graduation rates, while older students are more likely to drop out.
 - **Predictions:** The model successfully classifies new students based on their academic and demographic factors.
 
