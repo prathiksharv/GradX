@@ -25,7 +25,7 @@ The following R packages were used in this project:
 - **Train-Test Evaluation** - Measures accuracy, sensitivity, and specificity.
 - **Dropout Prediction for New Students** - Uses the trained model to classify new student records.
 
-## 📊 Results and Insights
+## 📊 Results
 
 ### **1️⃣ Dropout vs Graduation Rate**
 Below is a bar chart showing the distribution of students who **graduated vs. dropped out**.
@@ -41,10 +41,15 @@ The following chart displays the **top 10 courses** with the highest student enr
 
 🔹 **Insight**: Some courses have significantly higher student enrollment, which may indicate program popularity or high demand.
 
-### **Model Performance**
-- **Accuracy:** ~80.8%
-- **Sensitivity (Recall for Graduates):** 62.3%
-- **Specificity (Recall for Dropouts):** 92.7%
+  ## ✅ Conclusion and Actionable Insights
+This analysis provides insights into **student enrollment trends and dropout rates**, helping institutions understand key factors influencing student retention.
+
+### **Key Takeaways:**
+- **VIF Analysis:** No severe multicollinearity issues detected, ensuring predictor stability.
+- **Model Accuracy:** ~80.8% accuracy with a sensitivity of **62.3%** and specificity of **92.7%**.
+- **Key Predictors:** Scholarship holders have significantly higher graduation rates, while older students are more likely to drop out.
+- **Predictions:** The model successfully classifies new students based on their academic and demographic factors.
+
 
 ### **Actionable Insights**
 1. **Scholarship Programs Significantly Reduce Dropout Rates**
@@ -52,7 +57,7 @@ The following chart displays the **top 10 courses** with the highest student enr
    - **Action:** Increase scholarships or introduce financial aid programs to support at-risk students.
 
 2. **Early Academic Performance is a Key Indicator of Retention**
-   - **First-semester grades and course load** strongly correlate with dropout likelihood.
+   - **First-semester grades** strongly correlate with dropout likelihood.
    - **Action:** Implement early **mentoring, tutoring, and academic support** programs.
 
 ## 📥 How to Use This Project
